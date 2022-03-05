@@ -138,6 +138,7 @@ public final class RightClickCommand extends JavaPlugin implements Listener {
 		Location location = e.getClickedBlock().getLocation();
 //		getLogger().info(e.getAction() + ", " + location);
 		if (blockCommands.containsKey(location)) {
+			e.setCancelled(true);
 			for (String command : blockCommands.get(location)) {
 				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 			}
