@@ -80,13 +80,15 @@ public final class RightClickCommand extends JavaPlugin implements Listener {
 		int line = 1;
 		try {
 			FileReader filereader = new FileReader(csvFile);
-			CSVReader csvReader = new CSVReaderBuilder(filereader).withSkipLines(1).build();
+			CSVReader csvReader = new CSVReaderBuilder(filereader).build();
 			String[] nextRecord;
 
 			//read csv line by line
 			while ((nextRecord = csvReader.readNext()) != null) {
 				line++;
 				if (nextRecord.length == 1 && nextRecord[0].isEmpty()) //Skip empty lines
+					continue;
+				if(nextRecord[2].equalsIgnoreCase("y"))
 					continue;
 
 				World world = null;

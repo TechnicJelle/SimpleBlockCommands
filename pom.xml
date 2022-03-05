@@ -6,7 +6,7 @@
 
 	<groupId>net.mctechnic</groupId>
 	<artifactId>RightClickCommand</artifactId>
-	<version>1.0.0-ALPHA</version>
+	<version>1.0.1-ALPHA</version>
 	<packaging>jar</packaging>
 
 	<name>RightClickCommand</name>
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
-			<version>5.5.2</version>
+			<version>5.6</version>
 		</dependency>
 	</dependencies>
 </project>
