@@ -1,0 +1,27 @@
+name: RightClickCommand
+version: ${project.version}
+main: net.mctechnic.rightclickcommand.RightClickCommand
+api-version: 1.18
+author: TechnicJelle
+description: ${project.description}
+website: ${project.url}
+commands:
+  rcc:
+    usage: Use /rcc reload
+    description: Reloads the CSV file with the block locations and commands
+    permission: rightclickcommand.commands.reload
+permissions:
+  rightclickcommand.*:
+    children:
+      rightclickcommand.commands.*: true
+    default: op
+    description: All permissions for the RightClickCommand plugin
+  rightclickcommand.commands.*:
+    children:
+      rightclickcommand.commands.reload: true
+    default: op
+    description: Permission for all commands
+  rightclickcommand.commands.reload:
+    default: op
+    description: Permission for the /rcc reload command
+
