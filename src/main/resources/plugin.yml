@@ -1,27 +1,27 @@
-name: RightClickCommand
+name: SimpleBlockCommands
 version: ${project.version}
-main: net.mctechnic.rightclickcommand.RightClickCommand
+main: net.mctechnic.simpleblockcommands.SimpleBlockCommands
 api-version: 1.18
 author: TechnicJelle
 description: ${project.description}
 website: ${project.url}
 commands:
-  rcc:
-    usage: Use /rcc reload
-    description: Reloads the CSV file with the block locations and commands
-    permission: rightclickcommand.commands.reload
+  sbc:
+    usage: Use /sbc reload
+    description: Reloads the blockCommands.conf file with the block locations and commands
+    permission: simpleblockcommands.commands.reload
 permissions:
-  rightclickcommand.*:
+  simpleblockcommands.*:
     children:
-      rightclickcommand.commands.*: true
+      simpleblockcommands.commands.*: true
     default: op
-    description: All permissions for the RightClickCommand plugin
-  rightclickcommand.commands.*:
+    description: All permissions for the Simple Block Commands plugin
+  simpleblockcommands.commands.*:
     children:
-      rightclickcommand.commands.reload: true
+      simpleblockcommands.commands.reload: true
     default: op
     description: Permission for all commands
-  rightclickcommand.commands.reload:
+  simpleblockcommands.commands.reload:
     default: op
-    description: Permission for the /rcc reload command
+    description: Permission for the /sbc reload command
 

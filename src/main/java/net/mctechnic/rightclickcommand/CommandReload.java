@@ -4,22 +4,30 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+
 public record CommandReload(RightClickCommand plugin) implements CommandExecutor, TabCompleter {
 
-	// This method is called, when somebody uses our command
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 		if (args.length != 1) return false;
 		if (args[0].equalsIgnoreCase("reload")) {
-			if(plugin.loadBlockCommands())
-				sender.sendMessage("Right Click Command reloaded successfully!");
-			else
-				sender.sendMessage("Right Click Command failed to reload. Check the server console!");
+			if(plugin.loadBlockCommands()) {
+				String message = "Right Click Command reloaded successfully!";
+				plugin.getLogger().info(message);
+				if (sender instanceof Player)
+					sender.sendMessage(message);
+			} else {
+				String message = "Right Click Command failed to reload.";
+				plugin.getLogger().warning(message);
+				if (sender instanceof Player)
+					sender.sendMessage(message + " Check the server console!");
+			}
 
 			return true;
 		}
