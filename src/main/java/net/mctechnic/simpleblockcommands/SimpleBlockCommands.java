@@ -211,7 +211,8 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 					case server -> commandSender = Bukkit.getConsoleSender();
 					default -> getLogger().warning("command.runBy was invalid. This shouldn't happen!");
 				}
-				//TODO: Implement command.hand
+				if(command.hand == Hand.left && e.getAction() != Action.LEFT_CLICK_BLOCK) continue;
+				if(command.hand == Hand.right && e.getAction() != Action.RIGHT_CLICK_BLOCK) continue;
 				if(commandSender == null) {
 					getLogger().warning("commandSender was null. This shouldn't happen!");
 					return;
