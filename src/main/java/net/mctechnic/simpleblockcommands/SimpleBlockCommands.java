@@ -12,8 +12,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -71,11 +73,15 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 
 		//if saveFile doesn't exist, generate a new one
 		if(!Files.exists(saveFile)) {
-			HoconConfigurationLoader loader = HoconConfigurationLoader.builder() //create a loader which can load and save your config-node-tree to a file
-					.path(saveFile) //path or file pointing at your config file
-					.build();
+			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().path(saveFile).build();
+			CommentedConfigurationNode root = null;
+			try {
+				root = loader.load(ConfigurationOptions.defaults().header("Example config file: https://github.com/TechnicJelle/SimpleBlockCommands/blob/main/example.conf"));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-			ConfigurationNode root = loader.createNode(); // your root configuration node, everything goes in here
+			if(root == null) return false;
 
 			ConfigurationNode blocksNode = root.node("blocks"); // this will be "foo: " in your config .. everything you put in here will be placed inside that "foo: " value
 
@@ -186,7 +192,7 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 			return false;
 		}
 
-		logBlockCommands();
+//		logBlockCommands();
 		return true;
 	}
 
@@ -222,6 +228,7 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void logBlockCommands() {
 		for (HashMap.Entry<Location, Command[]> entry : blockCommands.entrySet()) {
 			Location key = entry.getKey();

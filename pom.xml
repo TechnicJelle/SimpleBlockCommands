@@ -6,7 +6,7 @@
 
 	<groupId>net.mctechnic</groupId>
 	<artifactId>SimpleBlockCommands</artifactId>
-	<version>2.1.0-ALPHA</version>
+	<version>2.1.1-BETA</version>
 	<packaging>jar</packaging>
 
 	<name>SimpleBlockCommands</name>
