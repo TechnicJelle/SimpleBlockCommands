@@ -1,4 +1,4 @@
-package net.mctechnic.rightclickcommand;
+package net.mctechnic.simpleblockcommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,7 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public final class RightClickCommand extends JavaPlugin implements Listener {
+public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 
 	enum RunBy {
 		player, server

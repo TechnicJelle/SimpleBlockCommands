@@ -1,4 +1,4 @@
-package net.mctechnic.rightclickcommand;
+package net.mctechnic.simpleblockcommands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public record CommandReload(RightClickCommand plugin) implements CommandExecutor, TabCompleter {
+public record CommandReload(SimpleBlockCommands plugin) implements CommandExecutor, TabCompleter {
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
