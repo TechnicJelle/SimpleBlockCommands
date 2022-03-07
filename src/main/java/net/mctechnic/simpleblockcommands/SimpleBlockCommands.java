@@ -1,8 +1,10 @@
 package net.mctechnic.simpleblockcommands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.EventHandler;
@@ -21,7 +23,10 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.StringJoiner;
 
 public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 
@@ -43,7 +48,7 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 		// Plugin startup logic
 		getServer().getPluginManager().registerEvents(this, this);
 
-		if(loadBlockCommands())
+		if (loadBlockCommands())
 			getLogger().info("Right Click Command blockCommands.conf loaded successfully!");
 		else
 			getLogger().warning("Right Click Command blockCommands.conf failed to load!");
@@ -62,9 +67,9 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 
 	public boolean loadBlockCommands() {
 		//config dir
-		if(!getDataFolder().exists()) {
+		if (!getDataFolder().exists()) {
 			boolean madeDir = getDataFolder().mkdir();
-			if(madeDir) {
+			if (madeDir) {
 				getLogger().info("Config directory made");
 			}
 		}
@@ -72,7 +77,7 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 		Path saveFile = Path.of(getDataFolder() + "/blockCommands.conf");
 
 		//if saveFile doesn't exist, generate a new one
-		if(!Files.exists(saveFile)) {
+		if (!Files.exists(saveFile)) {
 			HoconConfigurationLoader loader = HoconConfigurationLoader.builder().path(saveFile).build();
 			CommentedConfigurationNode root = null;
 			try {
@@ -81,7 +86,7 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 				e.printStackTrace();
 			}
 
-			if(root == null) return false;
+			if (root == null) return false;
 
 			ConfigurationNode blocksNode = root.node("blocks"); // this will be "foo: " in your config .. everything you put in here will be placed inside that "foo: " value
 
@@ -124,28 +129,28 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 		try {
 			root = loader.load();
 			ConfigurationNode blocksNode = root.node("blocks");
-			if(blocksNode.virtual()) throw new Exception("blocks property is required!");
+			if (blocksNode.virtual()) throw new Exception("blocks property is required!");
 			List<? extends ConfigurationNode> children = blocksNode.childrenList();
 			for (ConfigurationNode child : children) {
 				//world
 				ConfigurationNode worldNode = child.node("world");
-				if(worldNode.virtual()) throw new Exception("world property is required!");
+				if (worldNode.virtual()) throw new Exception("world property is required!");
 				String worldName = worldNode.getString();
-				if(worldName == null) throw new Exception("world name couldn't be found!");
+				if (worldName == null) throw new Exception("world name couldn't be found!");
 				World world = Bukkit.getWorld(worldName);
-				if(world == null) throw new Exception("world name \"" + worldName + "\" couldn't be found!");
+				if (world == null) throw new Exception("world name \"" + worldName + "\" couldn't be found!");
 
 				//pos
 				ConfigurationNode pos = child.node("pos");
-				if(pos.virtual()) throw new Exception("pos property is required!");
+				if (pos.virtual()) throw new Exception("pos property is required!");
 				String xText = pos.node("x").getString();
-				if(xText == null) throw new Exception("x coordinate property is required!");
+				if (xText == null) throw new Exception("x coordinate property is required!");
 				int x = Integer.parseInt(xText);
 				String yText = pos.node("y").getString();
-				if(yText == null) throw new Exception("y coordinate property is required!");
+				if (yText == null) throw new Exception("y coordinate property is required!");
 				int y = Integer.parseInt(yText);
 				String zText = pos.node("z").getString();
-				if(zText == null) throw new Exception("z coordinate property is required!");
+				if (zText == null) throw new Exception("z coordinate property is required!");
 				int z = Integer.parseInt(zText);
 
 				Location location = new Location(world, x, y, z);
@@ -154,13 +159,13 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 
 				//commands
 				ConfigurationNode commandsNode = child.node("commands");
-				if(commandsNode.virtual()) throw new Exception("commands property is required!");
+				if (commandsNode.virtual()) throw new Exception("commands property is required!");
 				List<? extends ConfigurationNode> commandNodes = commandsNode.childrenList();
 				ArrayList<Command> commands = new ArrayList<>();
 
 				for (ConfigurationNode commandNode : commandNodes) {
 					String commandText = commandNode.node("command").getString();
-					if(commandText == null) throw new Exception("command property is required!");
+					if (commandText == null) throw new Exception("command property is required!");
 					String handText = commandNode.node("hand").getString("either");
 					Hand hand;
 					switch (handText) {
@@ -180,7 +185,7 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 //					getLogger().info("cmd: " + commandText + ", " + handText + ", " + runByText);
 				}
 
-				if(blockCommands.put(location, commands.toArray(new Command[0])) != null) {
+				if (blockCommands.put(location, commands.toArray(new Command[0])) != null) {
 					getLogger().warning("A command block was overwritten!"); //TODO: Add explanation on how to do this properly
 				}
 			}
@@ -204,10 +209,16 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onInteract(@NotNull PlayerInteractEvent e) {
-		if (e.getAction() == Action.PHYSICAL || e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_AIR
-				|| e.getHand() == EquipmentSlot.OFF_HAND || e.getClickedBlock() == null) return;
-		Location location = e.getClickedBlock().getLocation();
-//		getLogger().info(e.getAction() + ", " + location);
+		if (e.getAction() == Action.PHYSICAL || e.getAction() == Action.RIGHT_CLICK_AIR || e.getHand() == EquipmentSlot.OFF_HAND) return;
+		Block targetBlock = e.getClickedBlock();
+		boolean adventureLeftClick = e.getAction() == Action.LEFT_CLICK_AIR && e.getPlayer().getGameMode() == GameMode.ADVENTURE;
+		if (adventureLeftClick) {
+			targetBlock = e.getPlayer().getTargetBlockExact(4);
+		} else if (e.getAction() == Action.LEFT_CLICK_AIR)
+			return;
+
+		if (targetBlock == null || targetBlock.isEmpty()) return;
+		Location location = targetBlock.getLocation();
 		if (blockCommands.containsKey(location)) {
 			e.setCancelled(true);
 			for (Command command : blockCommands.get(location)) {
@@ -217,9 +228,9 @@ public final class SimpleBlockCommands extends JavaPlugin implements Listener {
 					case server -> commandSender = Bukkit.getConsoleSender();
 					default -> getLogger().warning("command.runBy was invalid. This shouldn't happen!");
 				}
-				if(command.hand == Hand.left && e.getAction() != Action.LEFT_CLICK_BLOCK) continue;
-				if(command.hand == Hand.right && e.getAction() != Action.RIGHT_CLICK_BLOCK) continue;
-				if(commandSender == null) {
+				if (command.hand == Hand.left && e.getAction() != Action.LEFT_CLICK_BLOCK && !adventureLeftClick) continue;
+				if (command.hand == Hand.right && e.getAction() != Action.RIGHT_CLICK_BLOCK) continue;
+				if (commandSender == null) {
 					getLogger().warning("commandSender was null. This shouldn't happen!");
 					return;
 				}
