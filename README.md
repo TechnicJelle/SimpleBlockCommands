@@ -11,7 +11,7 @@ A Minecraft Paper plugin that allows server owners to assign commands that get r
 The configuration file for this plugin is a [HOCON](https://github.com/lightbend/config/blob/main/HOCON.md) file
 
 This is the default example config:
-```
+```hocon
 # Example: https://github.com/TechnicJelle/SimpleBlockCommands/blob/main/example.conf
 
 blocks=[
@@ -36,7 +36,7 @@ blocks=[
 Everything should be within the `blocks` square brackets [ ]\
 To add a new command block, make a new pair of curly brackets { } with a world string, pos object and commands list as you can see in the example.\
 If you want to have multiple commands per block you can do that like so:
-```
+```hocon
 commands=[
     {
         command="say whoosh!"
