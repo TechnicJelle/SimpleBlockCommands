@@ -5,6 +5,8 @@ A Minecraft Paper plugin that allows server owners to assign commands that get r
 
 ## [Click here to download!](../../releases/latest)
 
+![demonstration](.github/readme_assets/demo.png)
+
 ## [TODO list](../../projects/1?fullscreen=true)
 
 ## Configuration
